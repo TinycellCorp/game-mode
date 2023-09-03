@@ -76,6 +76,13 @@ namespace GameMode
 
 #if UNITY_EDITOR
 
+        [InitializeOnLoadMethod]
+        private static void ClearEditorPrefs()
+        {
+            StartingGameMode = null;
+            RestoreScene = null;
+        }
+
         public static string StartingGameMode
         {
             get => EditorPrefs.GetString(StartingGameModeID);
