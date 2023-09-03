@@ -1,11 +1,11 @@
 ﻿//#define DOMAIN_RELOAD_HANDLING
 
-using System;
-using System.Collections;
-using System.Linq;
-using Cysharp.Threading.Tasks;
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.SceneManagement;
+#endif
+using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.LowLevel;
 using UnityEngine.SceneManagement;
