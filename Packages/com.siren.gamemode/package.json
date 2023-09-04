@@ -6,7 +6,6 @@
   "description": "GameMode(Level) Based Unity Library",
   "documentationUrl": "",
   "dependencies": {
-    "com.cysharp.unitask": "latest",
     "com.unity.editorcoroutines": "1.0.0"
   },
   "author": {
