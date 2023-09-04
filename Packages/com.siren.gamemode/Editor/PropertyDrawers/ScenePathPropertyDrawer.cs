@@ -1,6 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using SlotGame.PropertyAttributes;
+using GameMode.PropertyAttributes;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;

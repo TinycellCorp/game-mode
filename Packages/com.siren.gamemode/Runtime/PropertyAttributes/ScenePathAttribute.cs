@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace SlotGame.PropertyAttributes
+namespace GameMode.PropertyAttributes
 {
     public class ScenePathAttribute : PropertyAttribute
     {

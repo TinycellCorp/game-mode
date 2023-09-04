@@ -118,7 +118,8 @@ namespace GameMode
                 EditorPrefs.SetBool(nameof(EditorSettings.enterPlayModeOptions), true);
             }
 #endif
-            EditorSceneManager.playModeStartScene = settings.MainScene;
+            var sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(settings.MainScene);
+            EditorSceneManager.playModeStartScene = sceneAsset;
             EditorApplication.EnterPlaymode();
         }
 

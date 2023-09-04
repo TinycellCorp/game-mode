@@ -29,7 +29,7 @@ public class BuildProcessTests
         EditorBuildSettings.scenes = Array.Empty<EditorBuildSettingsScene>();
         MainSceneAddProcess.Execute(AppSettings.Instance);
 
-        var path = AssetDatabase.GetAssetPath(AppSettings.Instance.MainScene);
+        var path = AppSettings.Instance.MainScene;
         Assert.Contains(path, EditorBuildSettings.scenes.Select(s => s.path).ToList());
         Restore();
     }

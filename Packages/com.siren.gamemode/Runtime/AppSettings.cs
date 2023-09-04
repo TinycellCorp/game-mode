@@ -1,17 +1,39 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using GameMode.PropertyAttributes;
 using UnityEngine;
-using UnityEngine.Serialization;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
 namespace GameMode
 {
-    public class AppSettings : ScriptableObject
+    public partial class AppSettings : ScriptableObject
     {
         public const int MainSceneIndex = 0;
+
+        void OnEnable()
+        {
+            Instance = this;
+        }
+
+        public static AppSettings Instance { get; private set; }
+
+        [SerializeField] private bool skipInitialize = false;
+        public bool SkipInitialize => skipInitialize;
+
+        [ScenePath] [SerializeField] private string mainScene;
+        public string MainScene => mainScene;
+
+        [SerializeField] private List<ScriptableGameMode> gameModes;
+
+        public List<ScriptableGameMode> GameModes => gameModes;
+    }
 #if UNITY_EDITOR
+
+    public partial class AppSettings
+    {
         public const string AppSettingsPath = "Assets/Settings/" + nameof(AppSettings) + ".asset";
 
         public static AppSettings GetOrCreateSettings()
@@ -50,35 +72,12 @@ namespace GameMode
         }
 
         // [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        [InitializeOnLoadMethod()]
+        [InitializeOnLoadMethod]
         static void RuntimeInitialize()
         {
             // For editor, we need to load the Preload asset manually.
             LoadInstanceFromPreloadAssets();
         }
-#endif
-        void OnEnable()
-        {
-            Instance = this;
-        }
-
-        public static AppSettings Instance { get; private set; }
-
-        [SerializeField] private bool skipInitialize = false;
-        public bool SkipInitialize => skipInitialize;
-
-
-#if UNITY_EDITOR
-        [SerializeField] private SceneAsset mainScene;
-        public SceneAsset MainScene => mainScene;
-#endif
-        [SerializeField] private ScriptableGameMode globalGameMode;
-        [SerializeField] private ScriptableGameMode mainGameMode;
-
-        [SerializeField] private List<ScriptableGameMode> gameModes;
-
-        public ScriptableGameMode GlobalGameMode => globalGameMode;
-        public ScriptableGameMode MainGameMode => mainGameMode;
-        public List<ScriptableGameMode> GameModes => gameModes;
     }
+#endif
 }

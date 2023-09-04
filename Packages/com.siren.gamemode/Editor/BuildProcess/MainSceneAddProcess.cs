@@ -39,9 +39,10 @@ namespace GameMode.Editor.BuildProcess
                 return true;
             }
 
-            if (settings.MainScene != null)
+            if (!string.IsNullOrEmpty(settings.MainScene))
             {
-                var path = AssetDatabase.GetAssetPath(settings.MainScene);
+                // var path = AssetDatabase.GetAssetPath(settings.MainScene);
+                var path = settings.MainScene;
                 var scenes = EditorBuildSettings.scenes.ToList();
 
                 if (scenes.Any() && scenes.Select(_ => _.path).Contains(path))
@@ -72,8 +73,8 @@ namespace GameMode.Editor.BuildProcess
 
             if (app.MainScene != null)
             {
-                var path = AssetDatabase.GetAssetPath(app.MainScene);
-                Debug.Log(path);
+                // var path = AssetDatabase.GetAssetPath(app.MainScene);
+                Debug.Log(app.MainScene);
             }
         }
 
