@@ -6,6 +6,7 @@ using UnityEditor.Overlays;
 using UnityEditor.Toolbars;
 using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UIElements;
 
 namespace GameMode.Editor.Overlays
@@ -55,9 +56,20 @@ namespace GameMode.Editor.Overlays
             }
         }
 
+        class DropdownState : ScriptableSingleton<DropdownState>
+        {
+            public int latestGameModeIndex = -1;
+        }
+
         [EditorToolbarElement(ID, typeof(SceneView))]
         class ModesDropdown : EditorToolbarDropdownToggle, IAccessContainerWindow
         {
+            private static int LatestGameModeIndex
+            {
+                get => DropdownState.instance.latestGameModeIndex;
+                set => DropdownState.instance.latestGameModeIndex = value;
+            }
+
             public const string ID = nameof(GameModeToolbar) + "/" + nameof(ModesDropdown);
             public EditorWindow containerWindow { get; set; }
 
@@ -71,7 +83,11 @@ namespace GameMode.Editor.Overlays
 
                 style.minWidth = 150;
                 _playModeButton = this.Query<Button>().First();
-                _playModeButton.clicked += () => { App.StartGameMode(_playModeButton.text); };
+                _playModeButton.clicked += () =>
+                {
+                    LatestGameModeIndex = _index;
+                    App.StartGameMode(_playModeButton.text);
+                };
                 _playModeButton.style.flexGrow = 1;
 
                 _playModeListener = new PlayModeListener(this, OnPlayModeStateChanged);
@@ -81,7 +97,8 @@ namespace GameMode.Editor.Overlays
             private void OnAttachToPanel(AttachToPanelEvent e)
             {
                 if (!TryGetGameModes(out var modes)) return;
-                _index = Mathf.Clamp(_index, 0, modes.Count);
+                var latest = LatestGameModeIndex;
+                _index = Mathf.Clamp(latest >= 0 ? latest : _index, 0, modes.Count);
                 _playModeButton.text = modes[_index].name;
             }
 

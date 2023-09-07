@@ -76,27 +76,24 @@ namespace GameMode
 
 #if UNITY_EDITOR
 
-        [InitializeOnLoadMethod]
-        private static void ClearEditorPrefs()
+        class BootstrapState : ScriptableSingleton<BootstrapState>
         {
-            StartingGameMode = null;
-            RestoreScene = null;
+            public string startingGameMode;
+            public string restoreScene;
         }
 
         public static string StartingGameMode
         {
-            get => EditorPrefs.GetString(StartingGameModeID);
-            private set => EditorPrefs.SetString(StartingGameModeID, value);
+            get => BootstrapState.instance.startingGameMode;
+            private set => BootstrapState.instance.startingGameMode = value;
         }
 
         public static string RestoreScene
         {
-            get => EditorPrefs.GetString(RestoreSceneID);
-            set => EditorPrefs.SetString(RestoreSceneID, value);
+            get => BootstrapState.instance.restoreScene;
+            set => BootstrapState.instance.restoreScene = value;
         }
 
-        private const string RestoreSceneID = "RestoreScene";
-        private const string StartingGameModeID = "StartingGameMode";
 
         public static void StartGameMode(string name)
         {
