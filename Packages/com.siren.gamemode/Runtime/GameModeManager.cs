@@ -41,6 +41,11 @@ namespace GameMode
 
         public static void SwitchMode(IGameMode gameMode)
         {
+            if (gameMode == null)
+            {
+                throw new NullReferenceException(nameof(gameMode));
+            }
+
             var isAny = SwitchTasks.Any();
             SwitchTasks.Append(UniTask.Lazy(() => InternalSwitchMode(gameMode)));
             if (!isAny)
