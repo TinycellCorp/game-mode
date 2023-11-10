@@ -1,0 +1,32 @@
+{
+    "name": "GameMode.VContainer.Bloc",
+    "rootNamespace": "",
+    "references": [
+        "VContainer",
+        "GameMode.VContainer",
+        "UniBloc"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNIBLOC",
+        "VCONTAINER"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.siren.unibloc",
+            "expression": "",
+            "define": "UNIBLOC"
+        },
+        {
+            "name": "jp.hadashikick.vcontainer",
+            "expression": "",
+            "define": "VCONTAINER"
+        }
+    ],
+    "noEngineReferences": false
+}
