@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -14,11 +15,46 @@ namespace GameMode.VContainer
 
     public partial class SceneContext : LifetimeScope
     {
+        private static readonly Stack<IInstaller> GlobalPreInstallers = new();
+        static readonly object SyncRoot = new object();
+
+        public static PreInstallationScope EnqueuePreInstall(IInstaller installer)
+            => new PreInstallationScope(installer);
+
+        public readonly struct PreInstallationScope : IDisposable
+        {
+            public PreInstallationScope(IInstaller installer)
+            {
+                lock (SyncRoot)
+                {
+                    GlobalPreInstallers.Push(installer);
+                }
+            }
+
+            void IDisposable.Dispose()
+            {
+                lock (SyncRoot)
+                {
+                    GlobalPreInstallers.Pop();
+                }
+            }
+        }
+
         protected override void Configure(IContainerBuilder builder)
         {
 #if UNITY_EDITOR
             if (!Application.isPlaying) return;
 #endif
+            lock (SyncRoot)
+            {
+                foreach (var installer in GlobalPreInstallers)
+                {
+                    installer.Install(builder);
+                }
+            }
+
+            OnPreInstalled(builder);
+
             if (!Registers.TryGetValue(gameObject.scene, out var registers)) return;
             while (registers.Any())
             {
@@ -26,6 +62,18 @@ namespace GameMode.VContainer
             }
 
             LoadedContexts[gameObject.scene] = this;
+        }
+
+        protected virtual void OnPreInstalled(IContainerBuilder builder)
+        {
+            var installers = GetComponents<IOnPreInstalled>();
+            foreach (var installer in installers)
+            {
+                installer.Install(builder);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                Debug.LogWarning($"#SceneContext# Configure mockup: {installer.GetType().Name}");
+#endif
+            }
         }
 
         protected override void OnDestroy()
@@ -72,7 +120,7 @@ namespace GameMode.VContainer
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
-        public static void Initialize()
+        public static void InitializeOnLoad()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
@@ -91,5 +139,9 @@ namespace GameMode.VContainer
         }
 
         #endregion
+    }
+
+    public interface IOnPreInstalled : IInstaller
+    {
     }
 }
