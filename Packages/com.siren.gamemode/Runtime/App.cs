@@ -53,9 +53,21 @@ namespace GameMode
 #if UNITY_EDITOR
             if (!string.IsNullOrWhiteSpace(StartingGameMode))
             {
-                _startMode = settings.GameModes.FirstOrDefault(_ => _.name == StartingGameMode);
+                _startMode = settings.GameModes.FirstOrDefault(mode => mode.name == StartingGameMode);
                 StartingGameMode = null;
             }
+            else if (!string.IsNullOrWhiteSpace(StartingGameModeGuid))
+            {
+                var path = AssetDatabase.GUIDToAssetPath(StartingGameModeGuid);
+                if (!string.IsNullOrEmpty(path))
+                {
+                    _startMode = AssetDatabase.LoadAssetAtPath<ScriptableGameMode>(path);
+                    _startMode.State = GameModeState.Ended;
+                }
+
+                StartingGameModeGuid = null;
+            }
+
 #endif
             if (_startMode == null && startFromMain)
             {
@@ -80,6 +92,7 @@ namespace GameMode
         {
             public string startingGameMode;
             public string restoreScene;
+            public string startingGameModeGuid;
         }
 
         public static string StartingGameMode
@@ -88,12 +101,31 @@ namespace GameMode
             private set => BootstrapState.instance.startingGameMode = value;
         }
 
+        public static string StartingGameModeGuid
+        {
+            get => BootstrapState.instance.startingGameModeGuid;
+            private set => BootstrapState.instance.startingGameModeGuid = value;
+        }
+
         public static string RestoreScene
         {
             get => BootstrapState.instance.restoreScene;
             set => BootstrapState.instance.restoreScene = value;
         }
 
+        public static void StartGameMode(ScriptableGameMode mode)
+        {
+            if (Application.isPlaying) return;
+            if (!AssetDatabase.TryGetGUIDAndLocalFileIdentifier(mode.GetInstanceID(), out var guid, out long localId))
+            {
+                return;
+            }
+
+            StartingGameModeGuid = guid;
+            var sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(AppSettings.Instance.MainScene);
+            EditorSceneManager.playModeStartScene = sceneAsset;
+            EditorApplication.EnterPlaymode();
+        }
 
         public static void StartGameMode(string name)
         {

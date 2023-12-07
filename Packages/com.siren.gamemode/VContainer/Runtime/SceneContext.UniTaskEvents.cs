@@ -6,6 +6,7 @@ namespace GameMode.VContainer
     public partial class SceneContext
     {
         public AsyncApplicationFocusTrigger OnFocus() => this.GetAsyncApplicationFocusTrigger();
+        public AsyncUpdateTrigger OnUpdate() => this.GetAsyncUpdateTrigger();
     }
 }
 #endif
