@@ -35,7 +35,8 @@ namespace GameMode
             return scene;
         }
 
-        public static UniTask UnloadSceneAsync<T>(this ISceneContextDescriptor<T> descriptor) where T : class, ISceneContext
+        public static UniTask UnloadSceneAsync<T>(this ISceneContextDescriptor<T> descriptor)
+            where T : class, ISceneContext
         {
             descriptor.Dispose();
             return SceneManager.UnloadSceneAsync(descriptor.Name).ToUniTask();
@@ -62,6 +63,10 @@ namespace GameMode
         {
             State = GameModeState.Ended;
             return UniTask.CompletedTask;
+        }
+
+        public virtual void OnSwitchFailed(Exception exception)
+        {
         }
 
         protected void BeginState()

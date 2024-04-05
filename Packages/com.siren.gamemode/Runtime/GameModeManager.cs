@@ -78,6 +78,7 @@ namespace GameMode
                 _currentMode.State = GameModeState.Ended;
             }
 
+            var prevMode = _currentMode;
             _currentMode = mode;
             try
             {
@@ -89,6 +90,14 @@ namespace GameMode
             catch (Exception e)
             {
                 Debug.Log(e);
+                _currentMode.State = GameModeState.Ended;
+                _currentMode = prevMode;
+                if (_currentMode != null)
+                {
+                    _currentMode.State = GameModeState.Started;
+                    _currentMode.OnSwitchFailed(e);
+                }
+
                 throw;
             }
 

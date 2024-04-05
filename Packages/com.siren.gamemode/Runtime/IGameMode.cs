@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System;
+using Cysharp.Threading.Tasks;
 
 namespace GameMode
 {
@@ -16,6 +17,7 @@ namespace GameMode
         
         UniTask OnStartAsync();
         UniTask OnEndAsync();
+        void OnSwitchFailed(Exception exception);
     }
     
 }

@@ -11,7 +11,10 @@ namespace GameMode
         public abstract UniTask OnStartAsync();
 
         public abstract UniTask OnEndAsync();
-
+        public virtual void OnSwitchFailed(Exception exception)
+        {
+            
+        }
     }
 
     public class ScriptableGameMode<T> : ScriptableGameMode where T : class, IGameMode, new()
